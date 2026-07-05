@@ -1,0 +1,18 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.drift.dart"
+    - "lib/l10n/generated/**"
+  errors:
+    # freezed / json_serializable / riverpod put annotations on elements the
+    # analyzer considers invalid targets; this is expected and harmless.
+    invalid_annotation_target: ignore
+
+linter:
+  rules:
+    prefer_single_quotes: true
+    directives_ordering: true
+    unnecessary_lambdas: true
