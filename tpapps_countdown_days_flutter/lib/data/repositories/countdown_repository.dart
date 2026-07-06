@@ -21,20 +21,20 @@ class CountdownRepository {
         _db.reminders,
         _db.reminders.countdownId.equalsExp(_db.countdowns.id),
       ),
-    ])
-      ..where(_db.countdowns.deleted.equals(false));
+    ])..where(_db.countdowns.deleted.equals(false));
     return query.watch().map(_group);
   }
 
   Stream<Countdown?> watchById(String id) {
-    final query = _db.select(_db.countdowns).join([
-      leftOuterJoin(
-        _db.reminders,
-        _db.reminders.countdownId.equalsExp(_db.countdowns.id),
-      ),
-    ])
-      ..where(_db.countdowns.id.equals(id) &
-          _db.countdowns.deleted.equals(false));
+    final query =
+        _db.select(_db.countdowns).join([
+          leftOuterJoin(
+            _db.reminders,
+            _db.reminders.countdownId.equalsExp(_db.countdowns.id),
+          ),
+        ])..where(
+          _db.countdowns.id.equals(id) & _db.countdowns.deleted.equals(false),
+        );
     return query.watch().map((rows) {
       final grouped = _group(rows);
       return grouped.isEmpty ? null : grouped.first;
@@ -61,13 +61,13 @@ class CountdownRepository {
   }
 
   Future<Countdown?> getById(String id) async {
-    final row = await (_db.select(_db.countdowns)
-          ..where((t) => t.id.equals(id)))
-        .getSingleOrNull();
+    final row = await (_db.select(
+      _db.countdowns,
+    )..where((t) => t.id.equals(id))).getSingleOrNull();
     if (row == null || row.deleted) return null;
-    final rems = await (_db.select(_db.reminders)
-          ..where((r) => r.countdownId.equals(id)))
-        .get();
+    final rems = await (_db.select(
+      _db.reminders,
+    )..where((r) => r.countdownId.equals(id))).get();
     return _toDomain(row, rems);
   }
 
@@ -80,9 +80,9 @@ class CountdownRepository {
   Future<void> upsert(Countdown c) async {
     await _db.transaction(() async {
       await _db.into(_db.countdowns).insertOnConflictUpdate(_toRow(c));
-      await (_db.delete(_db.reminders)
-            ..where((r) => r.countdownId.equals(c.id)))
-          .go();
+      await (_db.delete(
+        _db.reminders,
+      )..where((r) => r.countdownId.equals(c.id))).go();
       for (final r in c.reminders) {
         await _db.into(_db.reminders).insert(_toReminderRow(r));
       }
@@ -92,8 +92,9 @@ class CountdownRepository {
   /// Soft-delete: keeps the row as a tombstone for future sync.
   Future<void> softDelete(String id) async {
     await _db.transaction(() async {
-      await (_db.delete(_db.reminders)..where((r) => r.countdownId.equals(id)))
-          .go();
+      await (_db.delete(
+        _db.reminders,
+      )..where((r) => r.countdownId.equals(id))).go();
       await (_db.update(_db.countdowns)..where((t) => t.id.equals(id))).write(
         CountdownsCompanion(
           deleted: const Value(true),
@@ -102,6 +103,28 @@ class CountdownRepository {
         ),
       );
     });
+  }
+
+  /// All rows **including tombstones** (deleted/dirty), for pushing to the
+  /// server during sync.
+  Future<List<Countdown>> getAllForSync() async {
+    final query = _db.select(_db.countdowns).join([
+      leftOuterJoin(
+        _db.reminders,
+        _db.reminders.countdownId.equalsExp(_db.countdowns.id),
+      ),
+    ]);
+    return _group(await query.get());
+  }
+
+  /// Applies a record pulled from the server: a tombstone hard-deletes locally
+  /// (cascading its reminders), otherwise it is upserted as synced.
+  Future<void> applyRemote(Countdown c) async {
+    if (c.deleted) {
+      await (_db.delete(_db.countdowns)..where((t) => t.id.equals(c.id))).go();
+    } else {
+      await upsert(c.copyWith(syncState: SyncState.synced));
+    }
   }
 
   /// Replace the entire local dataset (used by backup import).
@@ -152,52 +175,52 @@ Countdown _toDomain(CountdownRow row, List<ReminderRow> reminders) {
 }
 
 Reminder _toReminderDomain(ReminderRow r) => Reminder(
-      id: r.id,
-      countdownId: r.countdownId,
-      enabled: r.enabled,
-      offsetDays: r.offsetDays,
-      offsetHours: r.offsetHours,
-      offsetMinutes: r.offsetMinutes,
-      soundId: r.soundId,
-      notifId: r.notifId,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(r.createdAtMs),
-      updatedAt: DateTime.fromMillisecondsSinceEpoch(r.updatedAtMs),
-    );
+  id: r.id,
+  countdownId: r.countdownId,
+  enabled: r.enabled,
+  offsetDays: r.offsetDays,
+  offsetHours: r.offsetHours,
+  offsetMinutes: r.offsetMinutes,
+  soundId: r.soundId,
+  notifId: r.notifId,
+  createdAt: DateTime.fromMillisecondsSinceEpoch(r.createdAtMs),
+  updatedAt: DateTime.fromMillisecondsSinceEpoch(r.updatedAtMs),
+);
 
 CountdownsCompanion _toRow(Countdown c) => CountdownsCompanion(
-      id: Value(c.id),
-      title: Value(c.title),
-      note: Value(c.note),
-      targetMs: Value(c.target.millisecondsSinceEpoch),
-      allDay: Value(c.allDay),
-      calendarType: Value(c.calendarType),
-      lunarLeapMonth: Value(c.lunarLeapMonth),
-      direction: Value(c.direction),
-      precision: Value(c.precision),
-      repeatRule: Value(c.repeatRule),
-      repeatInterval: Value(c.repeatInterval),
-      categoryId: Value(c.categoryId),
-      colorValue: Value(c.colorValue),
-      icon: Value(c.icon),
-      coverPath: Value(c.coverPath),
-      pinned: Value(c.pinned),
-      sortOrder: Value(c.sortOrder),
-      createdAtMs: Value(c.createdAt.millisecondsSinceEpoch),
-      updatedAtMs: Value(c.updatedAt.millisecondsSinceEpoch),
-      remoteId: Value(c.remoteId),
-      syncState: Value(c.syncState),
-      deleted: Value(c.deleted),
-    );
+  id: Value(c.id),
+  title: Value(c.title),
+  note: Value(c.note),
+  targetMs: Value(c.target.millisecondsSinceEpoch),
+  allDay: Value(c.allDay),
+  calendarType: Value(c.calendarType),
+  lunarLeapMonth: Value(c.lunarLeapMonth),
+  direction: Value(c.direction),
+  precision: Value(c.precision),
+  repeatRule: Value(c.repeatRule),
+  repeatInterval: Value(c.repeatInterval),
+  categoryId: Value(c.categoryId),
+  colorValue: Value(c.colorValue),
+  icon: Value(c.icon),
+  coverPath: Value(c.coverPath),
+  pinned: Value(c.pinned),
+  sortOrder: Value(c.sortOrder),
+  createdAtMs: Value(c.createdAt.millisecondsSinceEpoch),
+  updatedAtMs: Value(c.updatedAt.millisecondsSinceEpoch),
+  remoteId: Value(c.remoteId),
+  syncState: Value(c.syncState),
+  deleted: Value(c.deleted),
+);
 
 RemindersCompanion _toReminderRow(Reminder r) => RemindersCompanion(
-      id: Value(r.id),
-      countdownId: Value(r.countdownId),
-      enabled: Value(r.enabled),
-      offsetDays: Value(r.offsetDays),
-      offsetHours: Value(r.offsetHours),
-      offsetMinutes: Value(r.offsetMinutes),
-      soundId: Value(r.soundId),
-      notifId: Value(r.notifId),
-      createdAtMs: Value(r.createdAt.millisecondsSinceEpoch),
-      updatedAtMs: Value(r.updatedAt.millisecondsSinceEpoch),
-    );
+  id: Value(r.id),
+  countdownId: Value(r.countdownId),
+  enabled: Value(r.enabled),
+  offsetDays: Value(r.offsetDays),
+  offsetHours: Value(r.offsetHours),
+  offsetMinutes: Value(r.offsetMinutes),
+  soundId: Value(r.soundId),
+  notifId: Value(r.notifId),
+  createdAtMs: Value(r.createdAt.millisecondsSinceEpoch),
+  updatedAtMs: Value(r.updatedAt.millisecondsSinceEpoch),
+);

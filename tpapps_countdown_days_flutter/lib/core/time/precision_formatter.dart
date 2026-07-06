@@ -56,7 +56,9 @@ String formatCountdown(
   if (include(Precision.minute)) tokens.add('${p.minutes}${labels.minute}');
   if (include(Precision.second)) tokens.add('${p.seconds}${labels.second}');
   if (include(Precision.millisecond)) {
-    tokens.add('${p.milliseconds.toString().padLeft(3, '0')}${labels.millisecond}');
+    tokens.add(
+      '${p.milliseconds.toString().padLeft(3, '0')}${labels.millisecond}',
+    );
   }
   return tokens.join(' ');
 }

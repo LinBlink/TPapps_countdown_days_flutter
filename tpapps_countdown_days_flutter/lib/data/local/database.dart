@@ -42,8 +42,8 @@ class Countdowns extends Table {
   IntColumn get updatedAtMs => integer()();
   // Reserved for cloud sync (Phase 2).
   TextColumn get remoteId => text().nullable()();
-  IntColumn get syncState => intEnum<SyncState>()
-      .withDefault(Constant(SyncState.localOnly.index))();
+  IntColumn get syncState =>
+      intEnum<SyncState>().withDefault(Constant(SyncState.localOnly.index))();
   BoolColumn get deleted => boolean().withDefault(const Constant(false))();
 
   @override
@@ -82,19 +82,18 @@ class Categories extends Table {
 
 @DriftDatabase(tables: [Countdowns, Reminders, Categories])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase([QueryExecutor? executor])
-      : super(executor ?? _openConnection());
+  AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
   int get schemaVersion => 1;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        onCreate: (m) => m.createAll(),
-        beforeOpen: (details) async {
-          await customStatement('PRAGMA foreign_keys = ON');
-        },
-      );
+    onCreate: (m) => m.createAll(),
+    beforeOpen: (details) async {
+      await customStatement('PRAGMA foreign_keys = ON');
+    },
+  );
 }
 
 LazyDatabase _openConnection() {

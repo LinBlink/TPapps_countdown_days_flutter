@@ -28,8 +28,9 @@ class CountdownCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: CupertinoColors.secondarySystemGroupedBackground
-              .resolveFrom(context),
+          color: CupertinoColors.secondarySystemGroupedBackground.resolveFrom(
+            context,
+          ),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
@@ -63,7 +64,9 @@ class CountdownCard extends StatelessWidget {
                     dateStr,
                     style: TextStyle(
                       fontSize: 13,
-                      color: CupertinoColors.secondaryLabel.resolveFrom(context),
+                      color: CupertinoColors.secondaryLabel.resolveFrom(
+                        context,
+                      ),
                     ),
                   ),
                 ],
@@ -94,7 +97,11 @@ class _DayBadge extends StatelessWidget {
     if (days == 0) {
       return Text(
         todayLabel,
-        style: TextStyle(color: color, fontSize: 17, fontWeight: FontWeight.w700),
+        style: TextStyle(
+          color: color,
+          fontSize: 17,
+          fontWeight: FontWeight.w700,
+        ),
       );
     }
     return Column(

@@ -29,11 +29,8 @@ abstract class Reminder with _$Reminder {
       _$ReminderFromJson(json);
 
   /// Total lead time before the event that this reminder fires.
-  Duration get offset => Duration(
-        days: offsetDays,
-        hours: offsetHours,
-        minutes: offsetMinutes,
-      );
+  Duration get offset =>
+      Duration(days: offsetDays, hours: offsetHours, minutes: offsetMinutes);
 
   bool get isAtEventTime => offset == Duration.zero;
 }

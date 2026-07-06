@@ -15,4 +15,3 @@ linter:
   rules:
     prefer_single_quotes: true
     directives_ordering: true
-    unnecessary_lambdas: true

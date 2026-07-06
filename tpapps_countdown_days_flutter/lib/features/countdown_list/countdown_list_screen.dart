@@ -145,8 +145,7 @@ class _CountdownListScreenState extends ConsumerState<CountdownListScreen> {
                                 .softDelete(c.id),
                             child: CountdownCard(
                               countdown: c,
-                              onTap: () =>
-                                  context.push('/countdown/${c.id}'),
+                              onTap: () => context.push('/countdown/${c.id}'),
                             ),
                           ),
                       ],
@@ -163,28 +162,28 @@ class _CountdownListScreenState extends ConsumerState<CountdownListScreen> {
 }
 
 Widget _deleteBackground(BuildContext context) => Container(
-      alignment: Alignment.centerRight,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-      padding: const EdgeInsets.only(right: 24),
-      decoration: BoxDecoration(
-        color: CupertinoColors.destructiveRed,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: const Icon(CupertinoIcons.delete, color: CupertinoColors.white),
-    );
+  alignment: Alignment.centerRight,
+  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+  padding: const EdgeInsets.only(right: 24),
+  decoration: BoxDecoration(
+    color: CupertinoColors.destructiveRed,
+    borderRadius: BorderRadius.circular(16),
+  ),
+  child: const Icon(CupertinoIcons.delete, color: CupertinoColors.white),
+);
 
 String _sortLabel(AppLocalizations l, SortMode mode) => switch (mode) {
-      SortMode.date => l.sortDate,
-      SortMode.created => l.sortCreated,
-      SortMode.name => l.sortName,
-      SortMode.manual => l.sortManual,
-    };
+  SortMode.date => l.sortDate,
+  SortMode.created => l.sortCreated,
+  SortMode.name => l.sortName,
+  SortMode.manual => l.sortManual,
+};
 
 String _groupLabel(AppLocalizations l, CountdownGroup group) => switch (group) {
-      CountdownGroup.pinned => l.sectionPinned,
-      CountdownGroup.upcoming => l.sectionUpcoming,
-      CountdownGroup.past => l.sectionPast,
-    };
+  CountdownGroup.pinned => l.sectionPinned,
+  CountdownGroup.upcoming => l.sectionUpcoming,
+  CountdownGroup.past => l.sectionPast,
+};
 
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.text});

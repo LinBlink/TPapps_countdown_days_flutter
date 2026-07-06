@@ -124,14 +124,15 @@ class _DetailBody extends ConsumerWidget {
         ? DateFormat.yMMMMEEEEd(localeName).format(effective)
         : DateFormat.yMMMMEEEEd(localeName).add_jm().format(effective);
 
-    final showLunar = countdown.calendarType == CalendarType.lunar ||
+    final showLunar =
+        countdown.calendarType == CalendarType.lunar ||
         ref.watch(settingsProvider).showLunar;
     final lunar = showLunar ? lunarInfoOf(effective) : null;
     final lunarText = lunar == null
         ? null
         : lunar.monthDay +
-            (lunar.solarTerm != null ? ' · ${lunar.solarTerm}' : '') +
-            (lunar.festivals.isNotEmpty ? ' · ${lunar.festivals.first}' : '');
+              (lunar.solarTerm != null ? ' · ${lunar.solarTerm}' : '') +
+              (lunar.festivals.isNotEmpty ? ' · ${lunar.festivals.first}' : '');
 
     return SafeArea(
       child: ListView(
@@ -148,8 +149,8 @@ class _DetailBody extends ConsumerWidget {
                     days == 0
                         ? l.isToday
                         : (days > 0
-                            ? l.daysLeft(days.abs())
-                            : l.daysSince(days.abs())),
+                              ? l.daysLeft(days.abs())
+                              : l.daysSince(days.abs())),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 40,
@@ -211,9 +212,9 @@ class _DetailBody extends ConsumerWidget {
 }
 
 String _repeatLabel(AppLocalizations l, RepeatRule rule) => switch (rule) {
-      RepeatRule.none => l.repeatNone,
-      RepeatRule.weekly => l.repeatWeekly,
-      RepeatRule.monthly => l.repeatMonthly,
-      RepeatRule.yearly => l.repeatYearly,
-      RepeatRule.lunarYearly => l.repeatLunarYearly,
-    };
+  RepeatRule.none => l.repeatNone,
+  RepeatRule.weekly => l.repeatWeekly,
+  RepeatRule.monthly => l.repeatMonthly,
+  RepeatRule.yearly => l.repeatYearly,
+  RepeatRule.lunarYearly => l.repeatLunarYearly,
+};

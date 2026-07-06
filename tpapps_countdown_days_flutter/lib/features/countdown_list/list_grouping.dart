@@ -26,19 +26,21 @@ List<CountdownSection> groupCountdowns(
   final filtered = q.isEmpty
       ? items
       : items
-          .where((c) =>
-              c.title.toLowerCase().contains(q) ||
-              (c.note?.toLowerCase().contains(q) ?? false))
-          .toList();
+            .where(
+              (c) =>
+                  c.title.toLowerCase().contains(q) ||
+                  (c.note?.toLowerCase().contains(q) ?? false),
+            )
+            .toList();
 
   DateTime eff(Countdown c) => effectiveTarget(c, now);
 
   int byMode(Countdown a, Countdown b) => switch (sort) {
-        SortMode.date => eff(a).compareTo(eff(b)),
-        SortMode.created => b.createdAt.compareTo(a.createdAt),
-        SortMode.name => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
-        SortMode.manual => a.sortOrder.compareTo(b.sortOrder),
-      };
+    SortMode.date => eff(a).compareTo(eff(b)),
+    SortMode.created => b.createdAt.compareTo(a.createdAt),
+    SortMode.name => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+    SortMode.manual => a.sortOrder.compareTo(b.sortOrder),
+  };
 
   final pinned = <Countdown>[];
   final upcoming = <Countdown>[];
@@ -58,7 +60,8 @@ List<CountdownSection> groupCountdowns(
 
   return [
     if (pinned.isNotEmpty) CountdownSection(CountdownGroup.pinned, pinned),
-    if (upcoming.isNotEmpty) CountdownSection(CountdownGroup.upcoming, upcoming),
+    if (upcoming.isNotEmpty)
+      CountdownSection(CountdownGroup.upcoming, upcoming),
     if (past.isNotEmpty) CountdownSection(CountdownGroup.past, past),
   ];
 }

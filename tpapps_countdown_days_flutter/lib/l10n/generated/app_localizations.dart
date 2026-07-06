@@ -536,11 +536,23 @@ abstract class AppLocalizations {
   /// **'Sound'**
   String get reminderSound;
 
+  /// No description provided for @soundDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get soundDefault;
+
   /// No description provided for @addReminder.
   ///
   /// In en, this message translates to:
   /// **'Add reminder'**
   String get addReminder;
+
+  /// No description provided for @enableReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders'**
+  String get enableReminders;
 
   /// No description provided for @settings.
   ///

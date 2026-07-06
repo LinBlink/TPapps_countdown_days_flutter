@@ -256,7 +256,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get reminderSound => '铃声';
 
   @override
+  String get soundDefault => '默认';
+
+  @override
   String get addReminder => '添加提醒';
+
+  @override
+  String get enableReminders => '提醒';
 
   @override
   String get settings => '设置';

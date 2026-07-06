@@ -66,24 +66,37 @@ class NotificationService {
   /// iOS/macOS alert/badge/sound). Returns whether notifications are allowed.
   Future<bool> requestPermissions() async {
     if (!_supported || !_ready) return false;
-    final android = _plugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
+    final android = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
     if (android != null) {
       final granted = await android.requestNotificationsPermission() ?? false;
       await android.requestExactAlarmsPermission();
       return granted;
     }
-    final ios = _plugin.resolvePlatformSpecificImplementation<
-        IOSFlutterLocalNotificationsPlugin>();
+    final ios = _plugin
+        .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin
+        >();
     if (ios != null) {
-      return await ios.requestPermissions(alert: true, badge: true, sound: true) ??
+      return await ios.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          ) ??
           false;
     }
-    final macos = _plugin.resolvePlatformSpecificImplementation<
-        MacOSFlutterLocalNotificationsPlugin>();
+    final macos = _plugin
+        .resolvePlatformSpecificImplementation<
+          MacOSFlutterLocalNotificationsPlugin
+        >();
     if (macos != null) {
       return await macos.requestPermissions(
-              alert: true, badge: true, sound: true) ??
+            alert: true,
+            badge: true,
+            sound: true,
+          ) ??
           false;
     }
     return true;

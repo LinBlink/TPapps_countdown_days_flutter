@@ -271,7 +271,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reminderSound => 'Sound';
 
   @override
+  String get soundDefault => 'Default';
+
+  @override
   String get addReminder => 'Add reminder';
+
+  @override
+  String get enableReminders => 'Reminders';
 
   @override
   String get settings => 'Settings';

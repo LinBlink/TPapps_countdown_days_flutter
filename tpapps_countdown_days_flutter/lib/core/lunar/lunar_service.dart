@@ -78,8 +78,12 @@ DateTime nextLunarYearly(DateTime storedSolarTarget, DateTime after) {
   final day = base.getDay();
   final startYear = Solar.fromDate(after).getLunar().getYear();
   for (var i = 0; i <= 5; i++) {
-    final candidate =
-        lunarToSolar(startYear + i, signedMonth, day, storedSolarTarget);
+    final candidate = lunarToSolar(
+      startYear + i,
+      signedMonth,
+      day,
+      storedSolarTarget,
+    );
     if (candidate != null && candidate.isAfter(after)) return candidate;
   }
   return storedSolarTarget;

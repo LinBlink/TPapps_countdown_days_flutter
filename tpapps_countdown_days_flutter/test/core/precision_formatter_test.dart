@@ -14,7 +14,13 @@ void main() {
   group('CountdownParts', () {
     test('splits a positive duration into components', () {
       final p = CountdownParts.of(
-        const Duration(days: 3, hours: 5, minutes: 22, seconds: 47, milliseconds: 678),
+        const Duration(
+          days: 3,
+          hours: 5,
+          minutes: 22,
+          seconds: 47,
+          milliseconds: 678,
+        ),
       );
       expect(p.isPast, isFalse);
       expect(p.days, 3);
